@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="lv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Rodions Timošins portfolio: motion dizains, video montāža un videogrāfija."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Rodions Timošins | Portfolio</title>
+    <link rel="icon" href="assets/profile/rodions-portrait.jpg" />
+    <link rel="preload" href="assets/profile/rodions-portrait.jpg" as="image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" aria-label="Rodions Timošins">
+          <span>R</span>
+        </a>
+
+        <nav class="main-nav" aria-label="Primary navigation">
+          <a href="#works" data-i18n="navWorks">Darbi</a>
+          <a href="#experience" data-i18n="navExperience">Pieredze</a>
+          <a href="#contact" data-i18n="navContact">Kontakti</a>
+          <a href="admin.html">Admin</a>
+        </nav>
+
+        <div class="language-switcher" aria-label="Language">
+          <button type="button" data-lang="lv">LV</button>
+          <button type="button" data-lang="ru">RU</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="shell hero-section" aria-labelledby="hero-title">
+        <div class="portrait-frame">
+          <img
+            src="assets/profile/rodions-portrait.jpg"
+            alt="Rodions Timošins"
+            data-profile="portrait"
+            width="872"
+            height="1052"
+          />
+        </div>
+
+        <div class="hero-copy">
+          <h1 id="hero-title" data-profile="name">Rodions <br />Timošins</h1>
+          <p class="hero-role" data-i18n="heroRole">
+            Motion dizainers · Video montāža · Videogrāfija
+          </p>
+
+          <div class="hero-contact">
+            <a href="mailto:rodionstimosins22@gmail.com" data-contact="email">
+              rodionstimosins22@gmail.com
+            </a>
+            <a href="tel:+37120064457" data-contact="phone">+371 200 644 57</a>
+          </div>
+
+          <div class="hero-actions">
+            <a class="text-link" href="#works" data-i18n="heroWorks">Skatīt darbus</a>
+            <a class="button-link" href="mailto:rodionstimosins22@gmail.com" data-i18n="heroWrite">
+              Rakstīt
+            </a>
+          </div>
+
+          <div class="metrics" id="metrics"></div>
+        </div>
+      </section>
+
+      <section class="shell work-section" id="works" aria-labelledby="works-title">
+        <div class="section-head">
+          <h2 id="works-title" data-i18n="worksTitle">Darbi</h2>
+          <div class="filters" id="filters" aria-label="Portfolio filters"></div>
+        </div>
+        <div class="project-grid" id="project-grid"></div>
+      </section>
+
+      <section class="shell experience-section" id="experience" aria-labelledby="experience-title">
+        <div class="section-head experience-head">
+          <h2 id="experience-title" data-i18n="experienceTitle">Pieredze</h2>
+          <p data-i18n="experienceIntro">
+            Reklāmas video, grafiskais dizains, satura filmēšana un montāža.
+          </p>
+        </div>
+        <div class="experience-grid" id="experience-grid"></div>
+      </section>
+
+      <section class="shell contact-section" id="contact" aria-labelledby="contact-title">
+        <div>
+          <h2 id="contact-title" data-i18n="contactTitle">Kontakti</h2>
+        </div>
+        <div class="contact-lines">
+          <a href="mailto:rodionstimosins22@gmail.com" data-contact="email">
+            rodionstimosins22@gmail.com
+          </a>
+          <a href="tel:+37120064457" data-contact="phone">+371 200 644 57</a>
+          <span data-contact="location">Rīga, Latvija</span>
+        </div>
+        <div class="social-links" id="social-links"></div>
+        <a class="contact-cta" href="mailto:rodionstimosins22@gmail.com">
+          <span data-i18n="contactCta">Rakstīt</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </section>
+    </main>
+
+    <footer class="shell site-footer">
+      <span>© Rodions Timošins, Rīga, Latvija</span>
+      <span>2026</span>
+    </footer>
+
+    <div class="modal" id="project-modal" hidden>
+      <button class="modal-scrim" type="button" data-close-modal aria-label="Close"></button>
+      <article class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="icon-button close-button" type="button" data-close-modal aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div class="modal-copy">
+          <p id="modal-meta"></p>
+          <h3 id="modal-title"></h3>
+          <p id="modal-description"></p>
+        </div>
+        <div class="modal-media" id="modal-media"></div>
+      </article>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
