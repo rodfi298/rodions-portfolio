@@ -1,46 +1,54 @@
-# Simple Media Workflow
+# Загрузка фото и видео
 
-## Best Free Setup
+## Простая схема
 
-- GitHub stores the website and `content/site.json`.
-- Vercel hosts the site.
-- Cloudinary stores photos and videos.
+- GitHub хранит сайт и файл `content/site.json`.
+- Vercel бесплатно показывает сайт по ссылке.
+- Cloudinary хранит тяжелые фото и видео.
+- Админка сохраняет только ссылки на медиа, поэтому сайт остается быстрым.
 
-This keeps the site fast and avoids putting large videos into GitHub.
+## Один раз настроить Cloudinary
 
-## Add A Work Without Code
+1. Cloudinary → **Settings**.
+2. Создайте **unsigned upload preset**.
+3. Скопируйте **cloud name**.
+4. Скопируйте название preset.
+5. Админка → **Settings**.
+6. Вставьте оба значения.
+7. Нажмите **Save changes**.
 
-1. Open `/admin.html`.
-2. Go to **Works**.
-3. Press **Add work**.
-4. Fill title, year, category and descriptions.
-5. Add media:
-   - paste a Cloudinary/Vimeo/YouTube URL;
-   - or press **Upload** if Cloudinary is configured in **Settings**.
-6. Press **Save changes**.
+## Добавить новую работу
 
-## Cloudinary Setup
+1. Админка → **Works**.
+2. **Add work**.
+3. Заполните название, год, тип, роль и описание.
+4. **Poster URL** → **Upload**: загрузите обложку.
+5. **Video / image URL** → **Upload**: загрузите видео или фото работы.
+6. **Save changes**.
 
-In Cloudinary:
+## Удалить работу
 
-1. Open **Settings**.
-2. Create an **unsigned upload preset**.
-3. Copy your **cloud name** and the preset name.
-4. Paste both into `/admin.html` → **Settings**.
-5. Save changes.
+1. Админка → **Works**.
+2. Выберите работу слева.
+3. Нажмите **Delete work**.
+4. Нажмите **Save changes**.
 
-## GitHub Save Setup
+## Заменить видео или фото
 
-Create a fine-grained GitHub token with:
+1. Админка → **Works**.
+2. Выберите работу.
+3. Нажмите **Upload** рядом с нужным полем.
+4. Выберите новый файл.
+5. Нажмите **Save changes**.
 
-- Repository access: only this portfolio repository.
-- Permissions: **Contents: Read and write**.
+## Если есть Vimeo или YouTube
 
-Paste it into `/admin.html` → **Settings** when saving. You can keep **Remember token** off if you want to paste it only when needed.
+Вставьте embed-ссылку в **Embed URL**. Тогда сайт покажет встроенный плеер вместо прямого файла.
 
-## Tips
+## Лучшие настройки файлов
 
-- Poster images should be around 1600 px wide.
-- Videos should be 1080p H.264 MP4 for smooth playback.
-- For YouTube/Vimeo, paste the embed URL into **Embed URL**.
-- For Cloudinary direct videos, paste the `.mp4` URL into **Video / image URL**.
+- Для видео: MP4/MOV/WebM, 1080p или 4K.
+- Для фото: JPG/PNG/WebP, длинная сторона примерно 1600-2400 px.
+- Для обложек: горизонтальное изображение примерно 16:10 или 16:9.
+
+Cloudinary может принять разные поддерживаемые форматы, а сайт добавляет оптимизированные URL для показа в браузере.
