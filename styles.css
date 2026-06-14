@@ -147,46 +147,24 @@ iframe {
 }
 
 .hero-section {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  align-items: end;
-  gap: 80px;
-  padding: 44px 0 32px;
+  display: block;
+  padding: 56px 0 42px;
   border-bottom: 1px solid var(--line);
-}
-
-.portrait-frame {
-  position: relative;
-  width: 210px;
-  overflow: hidden;
-  aspect-ratio: 1;
-  background: var(--soft);
-  border: 1px solid var(--line);
-}
-
-.portrait-frame::after {
-  position: absolute;
-  right: -1px;
-  bottom: -1px;
-  width: 42%;
-  height: 2px;
-  background: var(--accent);
-  content: "";
-}
-
-.portrait-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .hero-copy h1 {
   margin: 0;
-  max-width: 900px;
-  font-size: clamp(58px, 8vw, 118px);
+  max-width: 980px;
+  font-size: 108px;
   font-weight: 800;
   line-height: 0.9;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.hero-copy {
+  max-width: 980px;
+  margin-inline: auto;
 }
 
 .hero-role {
@@ -300,10 +278,11 @@ iframe {
 .section-head h2,
 .contact-section h2 {
   margin: 0;
-  font-size: clamp(42px, 6vw, 82px);
+  font-size: 76px;
   font-weight: 800;
   line-height: 0.92;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .filters {
@@ -393,6 +372,7 @@ iframe {
 .project-title {
   font-size: 14px;
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .project-role {
@@ -473,6 +453,7 @@ iframe {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .social-links:empty {
@@ -608,13 +589,16 @@ iframe {
 
 @media (max-width: 980px) {
   .hero-section {
-    grid-template-columns: 160px minmax(0, 1fr);
-    gap: 42px;
-    min-height: auto;
+    padding-top: 44px;
   }
 
-  .portrait-frame {
-    width: 160px;
+  .hero-copy h1 {
+    font-size: 76px;
+  }
+
+  .section-head h2,
+  .contact-section h2 {
+    font-size: 58px;
   }
 
   .metrics {
@@ -655,18 +639,11 @@ iframe {
   }
 
   .hero-section {
-    grid-template-columns: 112px minmax(0, 1fr);
-    align-items: start;
-    gap: 18px;
     padding: 34px 0 46px;
   }
 
-  .portrait-frame {
-    width: 112px;
-  }
-
   .hero-copy h1 {
-    font-size: clamp(34px, 10vw, 46px);
+    font-size: 46px;
   }
 
   .hero-role {
@@ -687,7 +664,8 @@ iframe {
   }
 
   .text-link,
-  .button-link {
+  .button-link,
+  .contact-cta {
     min-height: 34px;
     font-size: 10px;
   }
@@ -720,6 +698,11 @@ iframe {
   .experience-head {
     grid-template-columns: 1fr;
     gap: 18px;
+  }
+
+  .section-head h2,
+  .contact-section h2 {
+    font-size: 38px;
   }
 
   .filters {
@@ -765,12 +748,21 @@ iframe {
 }
 
 @media (max-width: 430px) {
-  .hero-section {
-    grid-template-columns: 96px minmax(0, 1fr);
+  .hero-copy h1 {
+    font-size: 42px;
   }
 
-  .portrait-frame {
-    width: 96px;
+  .header-inner {
+    gap: 14px;
+  }
+
+  .main-nav,
+  .language-switcher {
+    font-size: 10px;
+  }
+
+  .main-nav {
+    gap: 16px;
   }
 }
 
