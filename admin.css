@@ -50,6 +50,11 @@ button.secondary {
   border-color: var(--line);
 }
 
+button[hidden],
+[hidden] {
+  display: none !important;
+}
+
 button.danger {
   border-color: var(--danger);
   color: var(--danger);
@@ -113,9 +118,51 @@ select:focus {
 .admin-header nav {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 22px;
   font-size: 11px;
   font-weight: 800;
+}
+
+.lock-screen {
+  display: grid;
+  min-height: calc(100vh - 68px);
+  place-items: center;
+  padding: 28px;
+}
+
+.lock-card {
+  width: min(760px, 100%);
+  padding: 32px;
+  border: 1px solid var(--line);
+}
+
+.lock-card > p {
+  margin-bottom: 14px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.lock-card button[type="submit"] {
+  margin-top: 20px;
+}
+
+.lock-message {
+  display: none;
+}
+
+.lock-message.is-visible {
+  display: block;
+}
+
+.lock-message.is-error {
+  color: var(--danger);
+}
+
+.lock-message.is-ok {
+  color: var(--accent);
 }
 
 .admin-shell {
@@ -204,9 +251,10 @@ p {
 }
 
 h1 {
-  font-size: clamp(34px, 5vw, 72px);
+  font-size: 64px;
   font-weight: 800;
   line-height: 0.95;
+  overflow-wrap: anywhere;
 }
 
 h2 {
@@ -325,5 +373,28 @@ label {
 
   .admin-stage {
     padding: 24px 16px;
+  }
+
+  .lock-card {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 38px;
+  }
+
+  .admin-header {
+    align-items: flex-start;
+    gap: 18px;
+    padding: 16px;
+  }
+
+  .admin-header nav {
+    gap: 10px;
+  }
+
+  .admin-header nav a,
+  .admin-header nav button {
+    font-size: 10px;
   }
 }
