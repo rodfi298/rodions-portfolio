@@ -3,6 +3,7 @@
     data: null,
     activeTab: "profile",
     activeProject: 0,
+    isUnlocked: false,
     admin: {
       repo: "rodfi298/rodions-portfolio",
       branch: "main",
@@ -14,9 +15,19 @@
 
   const adminStorageKey = "rodions-portfolio-admin";
   const tokenStorageKey = "rodions-portfolio-token";
+  const sessionTokenKey = "rodions-portfolio-session-token";
   const statusNode = document.querySelector("#status");
 
   const selectors = {
+    lockScreen: document.querySelector("#lock-screen"),
+    adminApp: document.querySelector("#admin-app"),
+    unlockForm: document.querySelector("#unlock-form"),
+    lockRepo: document.querySelector("#lock-repo"),
+    lockToken: document.querySelector("#lock-token"),
+    lockRemember: document.querySelector("#lock-remember"),
+    lockMessage: document.querySelector("#lock-message"),
+    logout: document.querySelector("#logout-button"),
+    saveTop: document.querySelector("#save-top"),
     repo: document.querySelector("#repo-input"),
     branch: document.querySelector("#branch-input"),
     path: document.querySelector("#path-input"),
@@ -29,9 +40,24 @@
   };
 
   function setStatus(message, type = "") {
+    if (!statusNode) {
+      return;
+    }
+
     statusNode.textContent = message;
     statusNode.classList.toggle("is-error", type === "error");
     statusNode.classList.toggle("is-ok", type === "ok");
+  }
+
+  function setLockMessage(message = "", type = "") {
+    if (!selectors.lockMessage) {
+      return;
+    }
+
+    selectors.lockMessage.textContent = message;
+    selectors.lockMessage.classList.toggle("is-visible", Boolean(message));
+    selectors.lockMessage.classList.toggle("is-error", type === "error");
+    selectors.lockMessage.classList.toggle("is-ok", type === "ok");
   }
 
   function getPath(path) {
@@ -41,6 +67,10 @@
   function setPath(path, value) {
     const keys = path.split(".");
     let target = state.data;
+
+    if (!target) {
+      return;
+    }
 
     keys.slice(0, -1).forEach((key) => {
       if (!target[key] || typeof target[key] !== "object") {
@@ -73,22 +103,39 @@
   }
 
   function readAdminConfig() {
-    const saved = JSON.parse(window.localStorage.getItem(adminStorageKey) || "{}");
+    let saved = {};
+
+    try {
+      saved = JSON.parse(window.localStorage.getItem(adminStorageKey) || "{}");
+    } catch {
+      saved = {};
+    }
+
+    const localToken = window.localStorage.getItem(tokenStorageKey) || "";
+    const sessionToken = window.sessionStorage.getItem(sessionTokenKey) || "";
+
     state.admin = {
       ...state.admin,
       ...saved,
-      token: window.localStorage.getItem(tokenStorageKey) || "",
-      rememberToken: Boolean(window.localStorage.getItem(tokenStorageKey)),
+      token: localToken || sessionToken,
+      rememberToken: Boolean(localToken),
     };
   }
 
-  function writeAdminConfig() {
-    state.admin.repo = selectors.repo.value.trim();
-    state.admin.branch = selectors.branch.value.trim() || "main";
-    state.admin.path = selectors.path.value.trim() || "content/site.json";
-    state.admin.token = selectors.token.value.trim();
-    state.admin.rememberToken = selectors.remember.checked;
+  function readAdminInputs(source = "settings") {
+    const isLock = source === "lock";
+    const repoInput = isLock ? selectors.lockRepo : selectors.repo;
+    const tokenInput = isLock ? selectors.lockToken : selectors.token;
+    const rememberInput = isLock ? selectors.lockRemember : selectors.remember;
 
+    state.admin.repo = (repoInput?.value || state.admin.repo).trim();
+    state.admin.branch = (selectors.branch?.value || state.admin.branch || "main").trim();
+    state.admin.path = (selectors.path?.value || state.admin.path || "content/site.json").trim();
+    state.admin.token = (tokenInput?.value || state.admin.token).trim();
+    state.admin.rememberToken = Boolean(rememberInput?.checked);
+  }
+
+  function persistAdminConfig() {
     window.localStorage.setItem(
       adminStorageKey,
       JSON.stringify({
@@ -98,19 +145,112 @@
       }),
     );
 
-    if (state.admin.rememberToken && state.admin.token) {
+    if (state.admin.token && state.admin.rememberToken) {
       window.localStorage.setItem(tokenStorageKey, state.admin.token);
+      window.sessionStorage.removeItem(sessionTokenKey);
+      return;
+    }
+
+    window.localStorage.removeItem(tokenStorageKey);
+
+    if (state.admin.token) {
+      window.sessionStorage.setItem(sessionTokenKey, state.admin.token);
     } else {
-      window.localStorage.removeItem(tokenStorageKey);
+      window.sessionStorage.removeItem(sessionTokenKey);
+    }
+  }
+
+  function writeAdminConfig(source = "settings") {
+    readAdminInputs(source);
+    persistAdminConfig();
+    syncLockInputs();
+    syncSettingsInputs();
+  }
+
+  function syncLockInputs() {
+    if (selectors.lockRepo) {
+      selectors.lockRepo.value = state.admin.repo;
+    }
+
+    if (selectors.lockToken) {
+      selectors.lockToken.value = state.admin.token;
+    }
+
+    if (selectors.lockRemember) {
+      selectors.lockRemember.checked = state.admin.rememberToken;
     }
   }
 
   function syncSettingsInputs() {
-    selectors.repo.value = state.admin.repo;
-    selectors.branch.value = state.admin.branch;
-    selectors.path.value = state.admin.path;
-    selectors.token.value = state.admin.token;
-    selectors.remember.checked = state.admin.rememberToken;
+    if (selectors.repo) {
+      selectors.repo.value = state.admin.repo;
+    }
+
+    if (selectors.branch) {
+      selectors.branch.value = state.admin.branch;
+    }
+
+    if (selectors.path) {
+      selectors.path.value = state.admin.path;
+    }
+
+    if (selectors.token) {
+      selectors.token.value = state.admin.token;
+    }
+
+    if (selectors.remember) {
+      selectors.remember.checked = state.admin.rememberToken;
+    }
+  }
+
+  function showLocked(message = "", type = "") {
+    state.isUnlocked = false;
+    selectors.lockScreen.hidden = false;
+    selectors.adminApp.hidden = true;
+    selectors.logout.hidden = true;
+    selectors.saveTop.hidden = true;
+    syncLockInputs();
+    setLockMessage(message, type);
+  }
+
+  function showAdmin() {
+    state.isUnlocked = true;
+    selectors.lockScreen.hidden = true;
+    selectors.adminApp.hidden = false;
+    selectors.logout.hidden = false;
+    selectors.saveTop.hidden = false;
+    syncSettingsInputs();
+    setLockMessage("");
+  }
+
+  async function verifyAccess() {
+    if (!state.admin.token) {
+      throw new Error("Paste your GitHub token to unlock the admin panel.");
+    }
+
+    const response = await fetch(`https://api.github.com/repos/${state.admin.repo}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${state.admin.token}`,
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `GitHub access check failed (${response.status}). Check repository name and token permissions.`,
+      );
+    }
+
+    const repo = await response.json();
+    const permissions = repo.permissions;
+
+    if (permissions && !permissions.admin && !permissions.maintain && !permissions.push) {
+      throw new Error("This token can read the repository but cannot write content.");
+    }
+
+    state.admin.branch = state.admin.branch || repo.default_branch || "main";
+    persistAdminConfig();
   }
 
   async function loadContent() {
@@ -125,6 +265,18 @@
     state.admin.branch = state.data.cms?.branch || state.admin.branch;
     state.admin.path = state.data.cms?.contentPath || state.admin.path;
     syncSettingsInputs();
+    syncLockInputs();
+  }
+
+  async function unlockAndLoad() {
+    readAdminInputs("lock");
+    setLockMessage("Checking GitHub access...", "ok");
+    await verifyAccess();
+    showAdmin();
+    setStatus("Loading content...");
+    await loadContent();
+    render();
+    setStatus("Admin unlocked. Edit fields, upload media, then save changes.", "ok");
   }
 
   function bindInputs() {
@@ -272,6 +424,10 @@
   }
 
   function updateDataFromEvent(target) {
+    if (!state.data) {
+      return;
+    }
+
     const bindPath = target.dataset.bind;
     const projectField = target.dataset.projectField;
     const experienceField = target.dataset.experienceField;
@@ -367,6 +523,43 @@
     renderSocials();
   }
 
+  function insertCloudinaryTransformation(url, transformation) {
+    if (!url || !url.includes("/upload/")) {
+      return url;
+    }
+
+    return url.replace("/upload/", `/upload/${transformation}/`);
+  }
+
+  function replaceExtension(url, extension) {
+    const [base, query] = url.split("?");
+    const nextBase = base.replace(/\.[a-z0-9]+$/i, `.${extension}`);
+    return query ? `${nextBase}?${query}` : nextBase;
+  }
+
+  function cloudinaryDeliveryUrl(info, targetName) {
+    const secureUrl = info?.secure_url || "";
+    const resourceType = info?.resource_type || "";
+
+    if (targetName === "project.poster" && resourceType === "video") {
+      const posterUrl = insertCloudinaryTransformation(
+        secureUrl,
+        "so_0,w_1600,c_limit,f_jpg,q_auto:best",
+      );
+      return replaceExtension(posterUrl, "jpg");
+    }
+
+    if (resourceType === "video") {
+      return insertCloudinaryTransformation(secureUrl, "f_auto:video,q_auto:best");
+    }
+
+    if (resourceType === "image") {
+      return insertCloudinaryTransformation(secureUrl, "f_auto,q_auto:best");
+    }
+
+    return secureUrl;
+  }
+
   function openCloudinaryUpload(targetName) {
     const cloudName = state.data.cms?.cloudinaryCloudName;
     const uploadPreset = state.data.cms?.cloudinaryUploadPreset;
@@ -385,6 +578,7 @@
         resourceType: "auto",
         multiple: false,
         sources: ["local", "url", "camera"],
+        showAdvancedOptions: false,
       },
       (error, result) => {
         if (error) {
@@ -396,18 +590,25 @@
           return;
         }
 
-        const url = result.info.secure_url;
-
-        if (targetName === "profile.portrait") {
-          setPath("profile.portrait", url);
-        }
+        const url = cloudinaryDeliveryUrl(result.info, targetName);
+        const activeProject = state.data.projects[state.activeProject];
 
         if (targetName === "project.poster") {
-          state.data.projects[state.activeProject].poster = url;
+          activeProject.poster = url;
         }
 
         if (targetName === "project.mediaUrl") {
-          state.data.projects[state.activeProject].mediaUrl = url;
+          activeProject.mediaUrl = url;
+
+          if (result.info?.resource_type === "video") {
+            activeProject.kind = "video";
+            activeProject.category = "video";
+          }
+
+          if (result.info?.resource_type === "image") {
+            activeProject.kind = "design";
+            activeProject.category = activeProject.category === "video" ? "design" : activeProject.category;
+          }
         }
 
         setStatus("Uploaded to Cloudinary. Save changes to publish.", "ok");
@@ -429,7 +630,7 @@
 
   async function githubRequest(url, options = {}) {
     if (!state.admin.token) {
-      throw new Error("Add GitHub token in Settings before saving.");
+      throw new Error("Unlock the admin panel with your GitHub token before saving.");
     }
 
     const response = await fetch(url, {
@@ -451,7 +652,11 @@
   }
 
   async function saveToGitHub() {
-    writeAdminConfig();
+    if (!state.isUnlocked || !state.data) {
+      throw new Error("Unlock the admin panel before saving.");
+    }
+
+    writeAdminConfig("settings");
 
     state.data.cms = {
       ...(state.data.cms || {}),
@@ -481,6 +686,16 @@
     setStatus("Saved to GitHub. Vercel will redeploy automatically.", "ok");
   }
 
+  selectors.unlockForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    try {
+      await unlockAndLoad();
+    } catch (error) {
+      showLocked(error.message, "error");
+    }
+  });
+
   document.addEventListener("input", (event) => {
     if (event.target.matches("input, textarea, select")) {
       updateDataFromEvent(event.target);
@@ -499,6 +714,15 @@
     const uploadButton = event.target.closest("[data-upload-target]");
     const deleteExperience = event.target.closest("[data-delete-experience]");
     const deleteSocial = event.target.closest("[data-delete-social]");
+
+    if (event.target.closest("#logout-button")) {
+      state.admin.token = "";
+      state.admin.rememberToken = false;
+      window.localStorage.removeItem(tokenStorageKey);
+      window.sessionStorage.removeItem(sessionTokenKey);
+      showLocked("Logged out. Paste your GitHub token to edit again.");
+      return;
+    }
 
     if (tabButton) {
       state.activeTab = tabButton.dataset.tab;
@@ -566,13 +790,17 @@
   });
 
   readAdminConfig();
+  syncLockInputs();
+  syncSettingsInputs();
+
+  if (!state.admin.token) {
+    showLocked("Paste your private GitHub token to open the admin panel.");
+    return;
+  }
 
   try {
-    await loadContent();
-    syncSettingsInputs();
-    render();
-    setStatus("Content loaded. Edit fields, then save changes.", "ok");
+    await unlockAndLoad();
   } catch (error) {
-    setStatus(error.message, "error");
+    showLocked(error.message, "error");
   }
 })();
