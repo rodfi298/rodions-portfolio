@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="lv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Admin | Rodions Timošins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body>
+    <header class="admin-header">
+      <a class="brand" href="index.html"><span>R</span></a>
+      <nav>
+        <a href="index.html">Site</a>
+        <button type="button" id="save-top">Save changes</button>
+      </nav>
+    </header>
+
+    <main class="admin-shell">
+      <aside class="admin-rail" aria-label="Admin sections">
+        <p>Admin / Content</p>
+        <button type="button" class="is-active" data-tab="profile">Profile</button>
+        <button type="button" data-tab="works">Works</button>
+        <button type="button" data-tab="experience">Experience</button>
+        <button type="button" data-tab="settings">Settings</button>
+      </aside>
+
+      <section class="admin-stage">
+        <div class="status" id="status">Load content, edit fields, save to GitHub.</div>
+
+        <section class="panel is-active" data-panel="profile">
+          <div class="panel-head">
+            <h1>Profile</h1>
+            <p>Name, portrait, contacts and hero copy.</p>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              Name
+              <input data-bind="profile.name" autocomplete="name" />
+            </label>
+            <label>
+              Portrait URL
+              <span class="inline-control">
+                <input data-bind="profile.portrait" data-media-target="profile.portrait" />
+                <button type="button" data-upload-target="profile.portrait">Upload</button>
+              </span>
+            </label>
+            <label>
+              Email
+              <input data-bind="contact.email" autocomplete="email" />
+            </label>
+            <label>
+              Phone
+              <input data-bind="contact.phone" autocomplete="tel" />
+            </label>
+          </div>
+
+          <h2>Headline</h2>
+          <div class="form-grid three">
+            <label>LV <input data-bind="profile.headline.lv" /></label>
+            <label>RU <input data-bind="profile.headline.ru" /></label>
+            <label>EN <input data-bind="profile.headline.en" /></label>
+          </div>
+
+          <h2>Location</h2>
+          <div class="form-grid three">
+            <label>LV <input data-bind="profile.location.lv" /></label>
+            <label>RU <input data-bind="profile.location.ru" /></label>
+            <label>EN <input data-bind="profile.location.en" /></label>
+          </div>
+
+          <h2>Social links</h2>
+          <div id="social-list" class="stack-list"></div>
+          <button type="button" class="secondary" id="add-social">Add social</button>
+        </section>
+
+        <section class="panel" data-panel="works">
+          <div class="panel-head split">
+            <div>
+              <h1>Works</h1>
+              <p>Add, delete and edit portfolio items.</p>
+            </div>
+            <button type="button" id="add-project">Add work</button>
+          </div>
+
+          <div class="works-layout">
+            <div class="project-list" id="project-list"></div>
+            <article class="project-editor" id="project-editor"></article>
+          </div>
+        </section>
+
+        <section class="panel" data-panel="experience">
+          <div class="panel-head split">
+            <div>
+              <h1>Experience</h1>
+              <p>CV rows shown near the bottom of the site.</p>
+            </div>
+            <button type="button" id="add-experience">Add row</button>
+          </div>
+          <div id="experience-list" class="stack-list"></div>
+        </section>
+
+        <section class="panel" data-panel="settings">
+          <div class="panel-head">
+            <h1>Settings</h1>
+            <p>GitHub save target and Cloudinary upload widget.</p>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              GitHub repository
+              <input id="repo-input" placeholder="rodfi298/rodions-portfolio" />
+            </label>
+            <label>
+              Branch
+              <input id="branch-input" placeholder="main" />
+            </label>
+            <label>
+              Content path
+              <input id="path-input" placeholder="content/site.json" />
+            </label>
+            <label>
+              GitHub token
+              <input id="token-input" type="password" autocomplete="off" />
+            </label>
+            <label>
+              Cloudinary cloud name
+              <input data-bind="cms.cloudinaryCloudName" placeholder="your-cloud-name" />
+            </label>
+            <label>
+              Cloudinary unsigned upload preset
+              <input data-bind="cms.cloudinaryUploadPreset" placeholder="portfolio_uploads" />
+            </label>
+          </div>
+
+          <label class="check-row">
+            <input id="remember-token" type="checkbox" />
+            Remember token on this device
+          </label>
+
+          <div class="note">
+            The token is only used in this browser to save content to GitHub. Use a fine-grained
+            token with access only to this repository and Contents: Read and write.
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
