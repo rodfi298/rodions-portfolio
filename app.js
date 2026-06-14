@@ -92,18 +92,12 @@
 
   function renderProfile() {
     const name = data.profile?.name || "Rodions Timošins";
-    const portrait = data.profile?.portrait || "assets/profile/rodions-portrait.jpg";
     const email = data.contact?.email || "";
     const phone = data.contact?.phone || "";
     const location = localize(data.profile?.location || data.contact?.location);
 
     document.querySelectorAll('[data-profile="name"]').forEach((node) => {
       node.innerHTML = splitName(name);
-    });
-
-    document.querySelectorAll('[data-profile="portrait"]').forEach((node) => {
-      node.setAttribute("src", portrait);
-      node.setAttribute("alt", name);
     });
 
     document.querySelectorAll('[data-contact="email"]').forEach((node) => {
