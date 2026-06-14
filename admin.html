@@ -19,11 +19,39 @@
       <a class="brand" href="index.html"><span>R</span></a>
       <nav>
         <a href="index.html">Site</a>
-        <button type="button" id="save-top">Save changes</button>
+        <button type="button" id="logout-button" class="secondary" hidden>Log out</button>
+        <button type="button" id="save-top" hidden>Save changes</button>
       </nav>
     </header>
 
-    <main class="admin-shell">
+    <section class="lock-screen" id="lock-screen">
+      <form class="lock-card" id="unlock-form">
+        <p>Private admin</p>
+        <h1>Access</h1>
+        <div class="form-grid">
+          <label>
+            GitHub repository
+            <input id="lock-repo" value="rodfi298/rodions-portfolio" autocomplete="off" />
+          </label>
+          <label>
+            GitHub token
+            <input id="lock-token" type="password" autocomplete="off" />
+          </label>
+        </div>
+        <label class="check-row">
+          <input id="lock-remember" type="checkbox" />
+          Remember token on this device
+        </label>
+        <button type="submit">Unlock admin</button>
+        <div class="note lock-message" id="lock-message" aria-live="polite"></div>
+        <div class="note">
+          Only a GitHub token with write access to this repository can open the admin panel. Use a
+          fine-grained token with Contents: Read and write.
+        </div>
+      </form>
+    </section>
+
+    <main class="admin-shell" id="admin-app" hidden>
       <aside class="admin-rail" aria-label="Admin sections">
         <p>Admin / Content</p>
         <button type="button" class="is-active" data-tab="profile">Profile</button>
@@ -38,20 +66,13 @@
         <section class="panel is-active" data-panel="profile">
           <div class="panel-head">
             <h1>Profile</h1>
-            <p>Name, portrait, contacts and hero copy.</p>
+            <p>Name, contacts and hero copy.</p>
           </div>
 
           <div class="form-grid">
             <label>
               Name
               <input data-bind="profile.name" autocomplete="name" />
-            </label>
-            <label>
-              Portrait URL
-              <span class="inline-control">
-                <input data-bind="profile.portrait" data-media-target="profile.portrait" />
-                <button type="button" data-upload-target="profile.portrait">Upload</button>
-              </span>
             </label>
             <label>
               Email
